@@ -14,6 +14,7 @@ const fetchData = async (url, headers) => {
     };
   }
   const response = await axios.get(url, config);
+  process.env.COUNTER++
   return response.data;
 };
 
