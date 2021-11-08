@@ -48,8 +48,8 @@ rl.question('Introduce un usuario de GitHub: ', async (user) => {
         return;
       }
       const repo = repos[repoIndex - 1];
-      
-      console.log(`\nRepositorio '${repo.name}'`);
+
+      console.log(`\nRepositorio '${repo.name}'\n`);
 
       if (repo.size === 0) {
         console.log(`\nEl repositorio ${repo.name} está vacio`);
@@ -68,11 +68,12 @@ rl.question('Introduce un usuario de GitHub: ', async (user) => {
       const filesData = await getFilesData(contents);
       const { filesExts, files } = filesData;
 
-
       console.log('\n- Número de ficheros de cada tipo');
+      let extsOutput = [];
       for (const ext in filesExts) {
-        console.log(filesExts[ext], ext);
+        extsOutput.push(`${filesExts[ext]} ${ext}`);
       }
+      console.log(extsOutput.join(', '));
 
       console.log('\n- Commits');
       commits.forEach((commit) => {
@@ -83,7 +84,7 @@ rl.question('Introduce un usuario de GitHub: ', async (user) => {
       files.forEach((file) => {
         console.log(
           file.name,
-          '-->',
+          '->',
           file.lines,
           file.lines === 1 ? 'línea' : 'líneas'
         );

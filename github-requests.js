@@ -14,7 +14,6 @@ const fetchData = async (url, headers) => {
     };
   }
   const response = await axios.get(url, config);
-  process.env.COUNTER++
   return response.data;
 };
 
@@ -62,6 +61,6 @@ exports.fetchContents = async (url) => {
     if (error.response && error.response.status === 404) {
       return error.response.data.message;
     }
-    console.error(error.response);
+    console.error(error);
   }
 };
