@@ -2,16 +2,16 @@ const {
   fetchRepos,
   fetchCommits,
   fetchContents,
-} = require('./github-requests');
-const { getFilesData } = require('./filesData');
-const readline = require('readline');
+} = require("./github-requests");
+const { getFilesData } = require("./filesData");
+const readline = require("readline");
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-rl.question('Introduce un usuario de GitHub: ', async (user) => {
+rl.question("Introduce un usuario de GitHub: ", async (user) => {
   const repos = await fetchRepos(user);
 
   if (!Array.isArray(repos)) {
@@ -25,30 +25,31 @@ rl.question('Introduce un usuario de GitHub: ', async (user) => {
     rl.close();
     return;
   }
-  console.log(`Repositorios de '${user}'`);
 
+  console.log(`Repositorios de '${user}'`);
   repos.forEach((repo, index) => {
     console.log(`${index + 1}. ${repo.name}`);
   });
 
   rl.question(
-    '\nElige un repositorio para ver sus commits y archivos: ',
+    "\nElige un repositorio para ver sus commits y archivos: ",
     async (repoIndex) => {
       repoIndex = Number(repoIndex);
 
+      // La opción es inválida
       if (
         Number.isNaN(repoIndex) ||
         repoIndex > repos.length ||
         repoIndex < 1
       ) {
         console.log(
-          '\nDebes seleccionar el repositorio indicando un número dentro del rango'
+          `\nDebes seleccionar el repositorio indicando un número dentro del rango`
         );
         rl.close();
         return;
       }
-      const repo = repos[repoIndex - 1];
 
+      const repo = repos[repoIndex - 1];
       console.log(`\nRepositorio '${repo.name}'\n`);
 
       if (repo.size === 0) {
@@ -57,36 +58,38 @@ rl.question('Introduce un usuario de GitHub: ', async (user) => {
         return;
       }
 
+      // Obteniendo data del repositorio selecionado
       const contents = await fetchContents(
-        repo.contents_url.replace('{+path}', '')
+        repo.contents_url.replace("{+path}", "")
       );
-
       const commits = await fetchCommits(
-        repo.commits_url.replace('{/sha}', '')
+        repo.commits_url.replace("{/sha}", "")
       );
-
+      console.log('CONTENTES: \n', contents)
       const filesData = await getFilesData(contents);
       const { filesExts, files } = filesData;
 
-      console.log('\n- Número de ficheros de cada tipo');
+      console.log(`\n\n\n===== Información del repositorio '${repo.name}' =====\n`)
+
+      console.log("\n-- Número de ficheros de cada tipo:\n");
       let extsOutput = [];
       for (const ext in filesExts) {
         extsOutput.push(`${filesExts[ext]} ${ext}`);
       }
-      console.log(extsOutput.join(', '));
+      console.log(extsOutput.join(", "));
 
-      console.log('\n- Commits');
+      console.log("\n-- Commits\n");
       commits.forEach((commit) => {
         console.log(`${commit.date} - ${commit.message}`);
       });
 
-      console.log('\n- Líneas de código de cada fichero');
+      console.log("\n-- Líneas de código de cada fichero:\n");
       files.forEach((file) => {
         console.log(
-          file.name,
-          '->',
+          file.path,
+          "->",
           file.lines,
-          file.lines === 1 ? 'línea' : 'líneas'
+          file.lines === 1 ? "línea" : "líneas"
         );
       });
 

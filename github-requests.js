@@ -20,8 +20,7 @@ const fetchData = async (url, headers) => {
 exports.fetchRepos = async (user) => {
   const url = `https://api.github.com/users/${user}/repos`;
   try {
-    const repos = await fetchData(url);
-    return repos;
+    return await fetchData(url);
   } catch (error) {
     // No se encontro repositorio
     if (error.response && error.response.status === 404) {
@@ -52,10 +51,9 @@ exports.fetchCommits = async (url) => {
 
 exports.fetchContents = async (url) => {
   try {
-    const response = await fetchData(url, {
+    return await fetchData(url, {
       Accept: 'application/vnd.github.VERSION.raw',
     });
-    return response;
   } catch (error) {
     //No se encontro el fichero
     if (error.response && error.response.status === 404) {
